@@ -1,0 +1,6 @@
+framework module PJSIPFramework {
+  umbrella header "PJSIPFramework.h"
+  export *
+
+  module * { export * }
+}
