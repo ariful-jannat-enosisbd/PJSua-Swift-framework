@@ -145,10 +145,6 @@ PJSua2 pjsua2;
     pjsua2.call_listener(function);
 }
 
-- (void)event_listener_wrapper: (void(*)(int))function {
-    pjsua2.event_listener(function);
-}
-
 
 /**
  Listener (When we have changes on the acc reg state, this function pointer will notify swift.)

@@ -90,7 +90,6 @@ MyAccount *acc = NULL;
 // Listen swift code via function pointers
 void (*incomingCallPtr)() = 0;
 void (*callStatusListenerPtr)(int, int) = 0;
-void (*eventListener)(int) = 0;
 void (*accStatusListenerPtr)(bool) = 0;
 void (*updateVideoPtr)(void *) = 0;
 
@@ -120,9 +119,14 @@ void MyEndpoint::onTimer(const OnTimerParam &prm)
             std::cout << err.info() << std::endl;
         }
     } else if (code == ANSWER_CALL) {
-        CallOpParam op(true);
-        op.statusCode = PJSIP_SC_OK;
-        call->answer(op);
+        if (call && call->getInfo().state == PJSIP_INV_STATE_INCOMING) {  // Check if there's an incoming call
+            CallOpParam op(true);
+            op.statusCode = PJSIP_SC_OK;
+            call->answer(op);
+        } else {
+            // Handle cases where there's no incoming call
+            std::cerr << "No incoming call to answer." << std::endl;
+        }
     } else if (code == HOLD_CALL) {
         if (call != NULL) {
             CallOpParam op(true);
@@ -515,10 +519,6 @@ void PJSua2::call_listener(void (* funcpntr)(int, int))
     callStatusListenerPtr = funcpntr;
 }
 
-void PJSua2::event_listener(void (* funcpntr)(int))
-{
-    eventListener = funcpntr;
-}
 /**
  Listener (When we have changes on the acc reg state, this function pointer will notify swift.)
  */

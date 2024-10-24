@@ -106,7 +106,6 @@
  (Runs swift code from C++)
  */
 -(void) call_listener_wrapper: (void(*)(int, int))function;
--(void) event_listener_wrapper: (void(*)(int))function;
 
 /**
  Listener (When we have changes on the acc reg state, this function pointer will notify swift.)

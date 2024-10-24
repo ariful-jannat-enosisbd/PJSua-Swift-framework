@@ -115,8 +115,6 @@ public:
      Listener (When we have changes on the call state, this function pointer will notify swift.)
      */
     void call_listener(void(*function)(int,int));
-    
-    void event_listener(void(*function)(int));
 
     /**
      Listener (When we have changes on the acc reg state, this function pointer will notify swift.)
