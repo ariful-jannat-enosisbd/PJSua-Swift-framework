@@ -57,6 +57,12 @@ PJSua2 pjsua2;
     pjsua2.createAccount(username, password, registrar, port);
 }
 
+- (void)setProxyServerAddress:(NSString *)proxyAddr
+{
+    std::string proxyAddress = std::string([proxyAddr UTF8String]);;
+    pjsua2.setProxyServerAddress(proxyAddress);
+}
+
 /**
  Unregister account
  */
@@ -71,6 +77,19 @@ PJSua2 pjsua2;
     pjsua2.answerCall();
 }
 
+- (void)answerCall:(NSString *)dest_uri channelId:(NSString *)channelId mediaAddr:(NSString *)mediaAddr
+{
+    std::string channelIdStr = std::string([channelId UTF8String]);
+    std::string mediaAddrStr = std::string([mediaAddr UTF8String]);;
+    std::string desturiStr = std::string([dest_uri UTF8String]);;
+    pjsua2.answerCall(desturiStr, channelIdStr, mediaAddrStr);
+}
+
+- (void) setUserAccount:(NSString *)userId
+{
+    std::string userIdStr = std::string([userId UTF8String]);
+    pjsua2.setAccount(userIdStr);
+}
 /**
  Hangup active call (Incoming/Outgoing/Active)
  */
@@ -152,6 +171,10 @@ PJSua2 pjsua2;
  */
 -(void) acc_listener_wrapper: (void(*)(bool))function {
     pjsua2.acc_listener(function);
+}
+
+-(void) call_transfer_wrapper: (void(*)(bool))function {
+    pjsua2.call_transfer_listener(function);
 }
 
 /**

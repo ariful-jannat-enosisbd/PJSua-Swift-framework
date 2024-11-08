@@ -36,7 +36,11 @@ public:
     std::string dest_uri;
     std::string dtmf_tone;
     std::string transfer_dest;
-
+    
+    //below are for incoming call
+    std::string channelid;
+    std::string mediaAddr;
+    
     MyAccount() {}
     ~MyAccount()
     {
@@ -57,14 +61,14 @@ class MyCall : public Call
 {
 public:
     MyCall(Account &acc, int call_id = PJSUA_INVALID_ID)
-        : Call(acc, call_id)
+    : Call(acc, call_id)
     { }
     ~MyCall()
     { }
-
+    
     // Notification when call's state has changed.
     virtual void onCallState(OnCallStateParam &prm);
-
+    
     // Notification when call's media state has changed.
     virtual void onCallMediaState(OnCallMediaStateParam &prm);
     
@@ -80,17 +84,20 @@ enum {
     MUTE_CALL = 6,
     UNMUTE_CALL = 7,
     SEND_DTMF_TONE = 8,
-    TRANSFER_CALL = 9
+    TRANSFER_CALL = 9,
+    SEND_INVITE_TO_ANSWER_CALL = 10,
 };
 
 Call *call = NULL;
 Endpoint *ep = NULL;
 MyAccount *acc = NULL;
+std::string proxyServerAddress = "";
 
 // Listen swift code via function pointers
 void (*incomingCallPtr)() = 0;
 void (*callStatusListenerPtr)(int, int) = 0;
 void (*accStatusListenerPtr)(bool) = 0;
+void (*callTransferStatusListenerPtr)(bool) = 0;
 void (*updateVideoPtr)(void *) = 0;
 
 //Getter & Setter function
@@ -127,6 +134,33 @@ void MyEndpoint::onTimer(const OnTimerParam &prm)
             // Handle cases where there's no incoming call
             std::cerr << "No incoming call to answer." << std::endl;
         }
+    } else if (code == SEND_INVITE_TO_ANSWER_CALL) {
+        CallOpParam prm(true);
+        prm.opt.videoCount = 0;
+        
+        // Create SIP message headers
+        SipHeaderVector headers;
+        
+        // Add Channel ID header
+        SipHeader channelHeader;
+        channelHeader.hName = "X-Channel-Id";
+        channelHeader.hValue = acc->channelid;
+        headers.push_back(channelHeader);
+        
+        // Add Media IPv4 Address header
+        SipHeader ipHeader;
+        ipHeader.hName = "X-Media-Ipv4-Addr";
+        ipHeader.hValue = acc->mediaAddr;
+        headers.push_back(ipHeader);
+        
+        // Assign headers to call parameters
+        prm.txOption.headers = headers;
+        try {
+            call = new MyCall(*acc);
+            call->makeCall(acc->dest_uri, prm);
+        } catch(Error& err) {
+            std::cout << err.info() << std::endl;
+        }
     } else if (code == HOLD_CALL) {
         if (call != NULL) {
             CallOpParam op(true);
@@ -149,22 +183,42 @@ void MyEndpoint::onTimer(const OnTimerParam &prm)
             }
         }
     } else if (code == HANGUP_CALL) {
+        if(!call) { return; }
         if (call != NULL) {
             CallInfo ci;
-            try {
-                // Get call information
-                ci = call->getInfo();
-            } catch (...) {
-                // Handle exception if call info retrieval fails (e.g., if the call is already terminated)
-                ci.state = PJSIP_INV_STATE_DISCONNECTED;
-            }
-            
+//            try {
+//                // Attempt to get call information
+//                ci = call->getInfo();
+//            } catch (const std::exception& e) {
+//                // Log the exception message for debugging
+//                std::cerr << "Error retrieving call info: " << e.what() << std::endl;
+//                ci.state = PJSIP_INV_STATE_DISCONNECTED; // Set state to disconnected
+//            } catch (...) {
+//                // Handle any other exceptions
+//                std::cerr << "Unknown error occurred while retrieving call info." << std::endl;
+//                ci.state = PJSIP_INV_STATE_DISCONNECTED; // Set state to disconnected
+//            }
+
             // Check if the call is still in progress before attempting to hang up
-            if (ci.state != PJSIP_INV_STATE_DISCONNECTED) {
+            if (call->isActive()) {
                 CallOpParam op(true);
                 op.statusCode = PJSIP_SC_DECLINE;
-                call->hangup(op);
+
+                try {
+                    // Attempt to hang up the call
+                    call->hangup(op);
+                } catch (const std::exception& e) {
+                    // Log any errors during hangup
+                    std::cerr << "Error hanging up the call: " << e.what() << std::endl;
+                } catch (...) {
+                    // Handle any other exceptions during hangup
+                    std::cerr << "Unknown error occurred while hanging up the call." << std::endl;
+                }
+            } else {
+                std::cout << "Call is already disconnected, no action taken." << std::endl;
             }
+        } else {
+            std::cerr << "Call pointer is null, cannot hang up." << std::endl;
         }
     } else if (code == MUTE_CALL) {
         if (call != NULL) {
@@ -175,7 +229,7 @@ void MyEndpoint::onTimer(const OnTimerParam &prm)
                 if (aud_med != NULL) {
                     try {
                         ep->audDevManager().getCaptureDevMedia().stopTransmit(*aud_med);
-//                        aud_med->adjustTxLevel(0);  // Set the transmit level to 0 (mute)
+                        //                        aud_med->adjustTxLevel(0);  // Set the transmit level to 0 (mute)
                         std::cout << "Call muted." << std::endl;
                     } catch (Error &err) {
                         std::cout << "Error muting call: " << err.info() << std::endl;
@@ -192,7 +246,7 @@ void MyEndpoint::onTimer(const OnTimerParam &prm)
                 if (aud_med != NULL) {
                     try {
                         ep->audDevManager().getCaptureDevMedia().startTransmit(*aud_med);
-//                        aud_med->adjustTxLevel(0);  // Set the transmit level to 0 (mute)
+                        //                        aud_med->adjustTxLevel(0);  // Set the transmit level to 0 (mute)
                         std::cout << "Call Un Muted." << std::endl;
                     } catch (Error &err) {
                         std::cout << "Error unMuting call: " << err.info() << std::endl;
@@ -224,12 +278,12 @@ void MyEndpoint::onTimer(const OnTimerParam &prm)
                 CallOpParam op(true);
                 op.statusCode = PJSIP_SC_DECLINE;  // Set the status code for the transfer
                 std::string destinationNumber = acc->transfer_dest;
-
+                
                 // Log the transfer details
                 std::cout << "Initiating call transfer to: " << destinationNumber << std::endl;
-
+                
                 call->xfer(destinationNumber, op);
-
+                
                 // Log successful transfer initiation
                 std::cout << "Call transfer initiated to: " << destinationNumber << std::endl;
             } else {
@@ -252,7 +306,7 @@ void MyAccount::onRegState(OnRegStateParam &prm)
 {
     AccountInfo ai = getInfo();
     std::cout << (ai.regIsActive? "*** Register: code=" : "*** Unregister: code=")
-              << prm.code << std::endl;
+    << prm.code << std::endl;
     accStatusListenerPtr(ai.regIsActive);
 }
 
@@ -277,24 +331,14 @@ void MyCall::onCallState(OnCallStateParam &prm)
     CallInfo ci = getInfo();
     std::cout << "SIP_CALLING: Call state changed: " << ci.state << std::endl;
     callStatusListenerPtr(ci.state, ci.lastStatusCode);
-//    if (ci.state == PJSIP_INV_STATE_DISCONNECTED) {
-//        callStatusListenerPtr(0);
-//        
-//        /* Delete the call */
-//        delete call;
-//        call = NULL;
-//        return;
-//    }
-    
     setCallerId(ci.remoteUri);
-    
-//    if (ci.state == PJSIP_INV_STATE_CONFIRMED) {
-//        callStatusListenerPtr(1);
-//    }
-    
-    //Notify caller ID:
     PJSua2 pjsua2;
     pjsua2.incomingCallInfo();
+    if (ci.state == PJSIP_INV_STATE_DISCONNECTED) {
+        delete call;
+        call = NULL;
+        return;
+    }
 }
 
 void MyCall::onCallMediaState(OnCallMediaStateParam &prm)
@@ -327,6 +371,7 @@ void MyCall::onCallTransferStatus(OnCallTransferStatusParam &prm)
     } else {
         std::cout << "SIP_CALLING: Call transfer failed" << std::endl;
     }
+    callTransferStatusListenerPtr(prm.statusCode == PJSIP_SC_OK);
 }
 
 /**
@@ -334,14 +379,17 @@ void MyCall::onCallTransferStatus(OnCallTransferStatusParam &prm)
  */
 void PJSua2::createLib()
 {
+    if (ep != NULL) {
+        return; // Library is already initialized
+    }
+    
     ep = new MyEndpoint;
-
     try {
         ep->libCreate();
     } catch (Error& err){
         std::cout << "Startup error: " << err.info() << std::endl;
     }
-
+    
     //LibInit
     try {
         EpConfig ep_cfg;
@@ -349,7 +397,7 @@ void PJSua2::createLib()
     } catch(Error& err) {
         std::cout << "Initialization error: " << err.info() << std::endl;
     }
-
+    
     // Create SIP transport
     try {
         TransportConfig tcfg;
@@ -358,13 +406,14 @@ void PJSua2::createLib()
     } catch(Error& err) {
         std::cout << "Transport creation error: " << err.info() << std::endl;
     }
-
+    
     // Start the library (worker threads etc)
     try {
         ep->libStart();
     } catch(Error& err) {
         std::cout << "Startup error: " << err.info() << std::endl;
     }
+    setAccount("sip:localhost"); //TODO: remove it if not necessary
 }
 
 /**
@@ -391,33 +440,65 @@ void PJSua2::createAccount(std::string username, std::string password,
     // Configure an AccountConfig
     AccountConfig acfg;
     acfg.idUri = "sip:" + username + "@" + registrar + ":" + port;;
-    acfg.regConfig.registrarUri = "sip:" + registrar + ":" + port;;
+    acfg.regConfig.registrarUri = ""; // "sip:" + registrar + ":" + port;;
     acfg.regConfig.timeoutSec = 3600;
     
     AuthCredInfo cred("digest", "*", username, 0, password);
     acfg.sipConfig.authCreds.push_back(cred);
-    acfg.sipConfig.proxies.push_back("sip:sipproxy.us-east-1.dev.pbn-dev.com");
-
+    if(proxyServerAddress.length() > 0) {
+        acfg.sipConfig.proxies.push_back(proxyServerAddress);
+    }
     acfg.videoConfig.autoShowIncoming = true;
     acfg.videoConfig.autoTransmitOutgoing = true;
-    
-    if (!acc) {
-        // Create the account
-        acc = new MyAccount;
-        try {
+    acfg.regConfig.registerOnAdd = false;
+    try {
+        if(!acc) {
+            acc = new MyAccount;
             acc->create(acfg);
-        } catch(Error& err) {
-            std::cout << "Account creation error: " << err.info() << std::endl;
-        }
-    } else {
-        // Modify the account
-        try {
-            //Update the registration
+        } else {
             acc->modify(acfg);
-            acc->setRegistration(true);
-        } catch(Error& err) {
-            std::cout << "Account modify error: " << err.info() << std::endl;
         }
+    } catch (Error& err){
+        std::cout << "Account update error: " << err.info() << std::endl;
+    }
+//    if (!acc) {
+//        // Create the account
+//        acc = new MyAccount;
+//        try {
+//            acc->create(acfg);
+//        } catch(Error& err) {
+//            std::cout << "Account creation error: " << err.info() << std::endl;
+//        }
+//    } else {
+//        // Modify the account
+//        try {
+//            //Update the registration
+//            acc->modify(acfg);
+////            acc->setRegistration(true);
+//        } catch(Error& err) {
+//            std::cout << "Account modify error: " << err.info() << std::endl;
+//        }
+//    }
+}
+
+void PJSua2::setAccount(std::string userId) {
+    AccountConfig acfg;
+    acfg.idUri =  userId; //"sip:100@pbn-voipqa-1-47.practicebynumber.com";
+    acfg.mediaConfig.srtpUse = PJMEDIA_SRTP_DISABLED;
+    acfg.mediaConfig.srtpSecureSignaling = 0;
+    if(proxyServerAddress.length() > 0) {
+        acfg.sipConfig.proxies.push_back(proxyServerAddress);
+    }
+    acfg.regConfig.registerOnAdd = false;
+    try {
+        if(!acc) {
+            acc = new MyAccount;
+            acc->create(acfg, true);
+        } else {
+            acc->modify(acfg);
+        }
+    } catch(Error& err) {
+        std::cout << "Account creation error: " << err.info() << std::endl;
     }
 }
 
@@ -426,6 +507,7 @@ void PJSua2::createAccount(std::string username, std::string password,
  */
 void PJSua2::unregisterAccount()
 {
+    if(!acc) { return; }
     acc->setRegistration(false);
 }
 
@@ -434,12 +516,14 @@ void PJSua2::unregisterAccount()
  */
 void PJSua2::outgoingCall(std::string dest_uri)
 {
+    if(!acc) { return; }
     acc->dest_uri = dest_uri;
     ep->utilTimerSchedule(0, (Token)MAKE_CALL);
 }
 
 void PJSua2::transferCall(std::string dest_uri)
 {
+    if(!acc) { return; }
     acc->transfer_dest = dest_uri;
     ep->utilTimerSchedule(0, (Token)TRANSFER_CALL);
 }
@@ -449,6 +533,7 @@ void PJSua2::transferCall(std::string dest_uri)
  */
 void PJSua2::sendDTMFTone(std::string dtmf_tone)
 {
+    if(!acc) { return; }
     acc->dtmf_tone = dtmf_tone;
     ep->utilTimerSchedule(0, (Token)SEND_DTMF_TONE);
 }
@@ -461,11 +546,27 @@ void PJSua2::answerCall()
     ep->utilTimerSchedule(0, (Token)ANSWER_CALL);
 }
 
+void PJSua2::answerCall(std::string dest_uri, std::string channelId, std::string mediaAddr)
+{
+    if(!acc) { return; }
+    acc->dest_uri = dest_uri;
+    acc->channelid = channelId;
+    acc->mediaAddr = mediaAddr;
+    ep->utilTimerSchedule(0, (Token)SEND_INVITE_TO_ANSWER_CALL);
+}
+
+void PJSua2::setProxyServerAddress(std::string proxyAddr)
+{
+    proxyServerAddress = proxyAddr;
+}
+
+
 /**
  Hangup active call (Incoming/Outgoing/Active)
  */
 void PJSua2::hangupCall()
 {
+    if(!ep) { return; }
     ep->utilTimerSchedule(0, (Token)HANGUP_CALL);
 }
 
@@ -525,6 +626,11 @@ void PJSua2::call_listener(void (* funcpntr)(int, int))
 void PJSua2::acc_listener(void (* funcpntr)(bool))
 {
     accStatusListenerPtr = funcpntr;
+}
+
+void PJSua2::call_transfer_listener(void (* funcpntr)(bool))
+{
+    callTransferStatusListenerPtr = funcpntr;
 }
 
 /**

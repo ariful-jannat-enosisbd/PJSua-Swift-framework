@@ -43,6 +43,7 @@
 -(void) createAccountWrapper :(NSString*) username :(NSString*) password
                              :(NSString*) registrar :(NSString*) port;
 
+- (void)setProxyServerAddress:(NSString *)proxyAddr;
 /**
  Unregister account
  */
@@ -53,6 +54,11 @@
  Answer incoming call
  */
 -(void) answerCallWrapper;
+-(void) setUserAccount:(NSString *) userId;
+
+- (void)answerCall:(NSString *)dest_uri
+                     channelId:(NSString *)channelId
+                     mediaAddr:(NSString *)mediaAddr;
 
 /**
  Hangup active call (Incoming/Outgoing/Active)
@@ -112,6 +118,8 @@
  (Runs swift code from C++)
  */
 -(void) acc_listener_wrapper: (void(*)(bool))function;
+
+-(void) call_transfer_wrapper: (void(*)(bool))function;
 
 /**
  Listener (When we have video, this function pointer will notify swift.)

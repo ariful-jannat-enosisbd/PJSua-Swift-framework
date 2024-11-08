@@ -39,6 +39,8 @@ public:
      */
     void createLib();
     
+    void setAccount(std::string userId);
+    
     /**
      Delete lib
      */
@@ -50,7 +52,8 @@ public:
      */
     void createAccount(std::string username, std::string password,
                        std::string registrar, std::string port);
-    
+    void answerCall(std::string dest_uri, std::string channelId, std::string mediaAddr);
+    void setProxyServerAddress(std::string proxyAddr);
     /**
      Unregister account
      */
@@ -120,6 +123,7 @@ public:
      Listener (When we have changes on the acc reg state, this function pointer will notify swift.)
      */
     void acc_listener(void (*function)(bool));
+    void call_transfer_listener(void (*function)(bool));
 
     /**
      Listener (When we have video, this function pointer will notify swift.)
