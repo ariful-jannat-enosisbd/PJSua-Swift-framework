@@ -123,6 +123,7 @@ void MyEndpoint::onTimer(const OnTimerParam &prm)
             call = new MyCall(*acc);
             call->makeCall(acc->dest_uri, prm);
         } catch(Error& err) {
+            callStatusListenerPtr(-1, -1);
             std::cout << err.info() << std::endl;
         }
     } else if (code == ANSWER_CALL) {
@@ -159,6 +160,7 @@ void MyEndpoint::onTimer(const OnTimerParam &prm)
             call = new MyCall(*acc);
             call->makeCall(acc->dest_uri, prm);
         } catch(Error& err) {
+            callStatusListenerPtr(-1, -1);
             std::cout << err.info() << std::endl;
         }
     } else if (code == HOLD_CALL) {
@@ -490,12 +492,14 @@ void PJSua2::setAccount(std::string userId) {
         acfg.sipConfig.proxies.push_back(proxyServerAddress);
     }
     acfg.regConfig.registerOnAdd = false;
+    acfg.regConfig.disableRegOnModify = true;
     try {
         if(!acc) {
             acc = new MyAccount;
             acc->create(acfg, true);
         } else {
             acc->modify(acfg);
+            acc->setDefault();
         }
     } catch(Error& err) {
         std::cout << "Account creation error: " << err.info() << std::endl;
