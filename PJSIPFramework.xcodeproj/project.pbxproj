@@ -28,6 +28,14 @@
 		5343A20E2CAEBAE800073840 /* libgsmcodec-arm64-apple-darwin_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5343A2062CAEBAE800073840 /* libgsmcodec-arm64-apple-darwin_ios.a */; };
 		5343A20F2CAEBAE800073840 /* libwebrtc-arm64-apple-darwin_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5343A2072CAEBAE800073840 /* libwebrtc-arm64-apple-darwin_ios.a */; };
 		5343A2102CAEBAE800073840 /* libyuv-arm64-apple-darwin_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5343A2082CAEBAE800073840 /* libyuv-arm64-apple-darwin_ios.a */; };
+		5360119F2D019EA900C8D5F5 /* PJSIPWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 5360119D2D019EA900C8D5F5 /* PJSIPWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		536011A02D019EA900C8D5F5 /* PJSIPWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5360119E2D019EA900C8D5F5 /* PJSIPWrapper.m */; };
+		536011AC2D01C79A00C8D5F5 /* CallManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536011AA2D01C79A00C8D5F5 /* CallManager.cpp */; };
+		536011AD2D01C79A00C8D5F5 /* CallManager.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 536011AB2D01C79A00C8D5F5 /* CallManager.hpp */; };
+		536011B52D01D3C700C8D5F5 /* SIPCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536011B32D01D3C700C8D5F5 /* SIPCall.cpp */; };
+		536011B62D01D3C700C8D5F5 /* SIPCall.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 536011B42D01D3C700C8D5F5 /* SIPCall.hpp */; };
+		536011EF2D01FC5600C8D5F5 /* SipAccount.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536011ED2D01FC5600C8D5F5 /* SipAccount.cpp */; };
+		536011F02D01FC5600C8D5F5 /* SipAccount.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 536011EE2D01FC5600C8D5F5 /* SipAccount.hpp */; };
 		BA0970D12C3FFA6E004C4CE4 /* PJSIPFramework.docc in Sources */ = {isa = PBXBuildFile; fileRef = BA0970D02C3FFA6E004C4CE4 /* PJSIPFramework.docc */; };
 		BA0970D22C3FFA6E004C4CE4 /* PJSIPFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = BA0970CF2C3FFA6E004C4CE4 /* PJSIPFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BA1462CD2C4040770067BF46 /* CustomPJSUA2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA1462C82C4040770067BF46 /* CustomPJSUA2.cpp */; };
@@ -63,6 +71,14 @@
 		5343A2062CAEBAE800073840 /* libgsmcodec-arm64-apple-darwin_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libgsmcodec-arm64-apple-darwin_ios.a"; path = "PjsipLibrary/third_party/lib/libgsmcodec-arm64-apple-darwin_ios.a"; sourceTree = "<group>"; };
 		5343A2072CAEBAE800073840 /* libwebrtc-arm64-apple-darwin_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libwebrtc-arm64-apple-darwin_ios.a"; path = "PjsipLibrary/third_party/lib/libwebrtc-arm64-apple-darwin_ios.a"; sourceTree = "<group>"; };
 		5343A2082CAEBAE800073840 /* libyuv-arm64-apple-darwin_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libyuv-arm64-apple-darwin_ios.a"; path = "PjsipLibrary/third_party/lib/libyuv-arm64-apple-darwin_ios.a"; sourceTree = "<group>"; };
+		5360119D2D019EA900C8D5F5 /* PJSIPWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PJSIPWrapper.h; sourceTree = "<group>"; };
+		5360119E2D019EA900C8D5F5 /* PJSIPWrapper.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = PJSIPWrapper.m; sourceTree = "<group>"; };
+		536011AA2D01C79A00C8D5F5 /* CallManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CallManager.cpp; sourceTree = "<group>"; };
+		536011AB2D01C79A00C8D5F5 /* CallManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CallManager.hpp; sourceTree = "<group>"; };
+		536011B32D01D3C700C8D5F5 /* SIPCall.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SIPCall.cpp; sourceTree = "<group>"; };
+		536011B42D01D3C700C8D5F5 /* SIPCall.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SIPCall.hpp; sourceTree = "<group>"; };
+		536011ED2D01FC5600C8D5F5 /* SipAccount.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SipAccount.cpp; sourceTree = "<group>"; };
+		536011EE2D01FC5600C8D5F5 /* SipAccount.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SipAccount.hpp; sourceTree = "<group>"; };
 		BA0970CC2C3FFA6E004C4CE4 /* PJSIPFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PJSIPFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA0970CF2C3FFA6E004C4CE4 /* PJSIPFramework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PJSIPFramework.h; sourceTree = "<group>"; };
 		BA0970D02C3FFA6E004C4CE4 /* PJSIPFramework.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = PJSIPFramework.docc; sourceTree = "<group>"; };
@@ -133,6 +149,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5360119A2D019E3000C8D5F5 /* PJSIP */ = {
+			isa = PBXGroup;
+			children = (
+				5360119D2D019EA900C8D5F5 /* PJSIPWrapper.h */,
+				5360119E2D019EA900C8D5F5 /* PJSIPWrapper.m */,
+			);
+			path = PJSIP;
+			sourceTree = "<group>";
+		};
+		536011A92D01C78B00C8D5F5 /* CallManager */ = {
+			isa = PBXGroup;
+			children = (
+				536011AA2D01C79A00C8D5F5 /* CallManager.cpp */,
+				536011AB2D01C79A00C8D5F5 /* CallManager.hpp */,
+				536011B32D01D3C700C8D5F5 /* SIPCall.cpp */,
+				536011B42D01D3C700C8D5F5 /* SIPCall.hpp */,
+				536011ED2D01FC5600C8D5F5 /* SipAccount.cpp */,
+				536011EE2D01FC5600C8D5F5 /* SipAccount.hpp */,
+			);
+			path = CallManager;
+			sourceTree = "<group>";
+		};
 		BA0970C22C3FFA6E004C4CE4 = {
 			isa = PBXGroup;
 			children = (
@@ -216,6 +254,8 @@
 		BA1462CC2C4040770067BF46 /* PJSua2 */ = {
 			isa = PBXGroup;
 			children = (
+				536011A92D01C78B00C8D5F5 /* CallManager */,
+				5360119A2D019E3000C8D5F5 /* PJSIP */,
 				BA1462C82C4040770067BF46 /* CustomPJSUA2.cpp */,
 				BA1462C92C4040770067BF46 /* CustomPJSUA2.hpp */,
 				BA1462CA2C4040770067BF46 /* wrapper.h */,
@@ -232,8 +272,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				BA1462CF2C4040770067BF46 /* wrapper.h in Headers */,
+				536011B62D01D3C700C8D5F5 /* SIPCall.hpp in Headers */,
+				536011AD2D01C79A00C8D5F5 /* CallManager.hpp in Headers */,
+				536011F02D01FC5600C8D5F5 /* SipAccount.hpp in Headers */,
 				BA0970D22C3FFA6E004C4CE4 /* PJSIPFramework.h in Headers */,
 				BA1462CE2C4040770067BF46 /* CustomPJSUA2.hpp in Headers */,
+				5360119F2D019EA900C8D5F5 /* PJSIPWrapper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,10 +349,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				536011EF2D01FC5600C8D5F5 /* SipAccount.cpp in Sources */,
 				BAF8C3632C4000EF0060C817 /* PJSIPLibrary.swift in Sources */,
+				536011B52D01D3C700C8D5F5 /* SIPCall.cpp in Sources */,
+				536011A02D019EA900C8D5F5 /* PJSIPWrapper.m in Sources */,
 				BA1462CD2C4040770067BF46 /* CustomPJSUA2.cpp in Sources */,
 				BA0970D12C3FFA6E004C4CE4 /* PJSIPFramework.docc in Sources */,
 				BA1462D02C4040770067BF46 /* wrapper.mm in Sources */,
+				536011AC2D01C79A00C8D5F5 /* CallManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
