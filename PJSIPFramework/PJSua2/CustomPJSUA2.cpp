@@ -336,7 +336,15 @@ void MyCall::onCallState(OnCallStateParam &prm)
     setCallerId(ci.remoteUri);
     PJSua2 pjsua2;
     pjsua2.incomingCallInfo();
-    if (ci.state == PJSIP_INV_STATE_DISCONNECTED) {
+    if (ci.state == PJSIP_INV_STATE_CALLING) {
+        // Set NullDev during the calling state
+        ep->audDevManager().setNullDev();
+    } else if (ci.state == PJSIP_INV_STATE_EARLY) {
+        // Ringing state - set proper audio devices
+        ep->audDevManager().setCaptureDev(PJSUA_SND_DEFAULT_CAPTURE_DEV);
+        ep->audDevManager().setPlaybackDev(PJSUA_SND_DEFAULT_PLAYBACK_DEV);
+    } else if (ci.state == PJSIP_INV_STATE_DISCONNECTED) {
+        // Cleanup when call is disconnected
         delete call;
         call = NULL;
         return;
