@@ -18,36 +18,44 @@ public:
     
     void onCallStateChanged(std::string callId, const int &state, string stateName) override {
         if (wrapper.delegate) {
-            // Convert std::string to NSString
             NSString *nsCallId = [NSString stringWithUTF8String:callId.c_str()];
             NSString *nsStatename = [NSString stringWithUTF8String:stateName.c_str()];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [wrapper.delegate onCallStateChanged:nsCallId state:state stateName:nsStatename];
-            });
+            [wrapper.delegate onCallStateChanged:nsCallId state:state stateName:nsStatename];
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                
+//            });
         }
     }
     
     void onTransferStatusChanged(std::string callId, const int &transferStatus) override {
         if (wrapper.delegate) {
-            // Convert std::string to NSString
             NSString *nsCallId = [NSString stringWithUTF8String:callId.c_str()];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [wrapper.delegate onTransferStatusChanged:nsCallId transferStatus:transferStatus];
-            });
+            [wrapper.delegate onTransferStatusChanged:nsCallId transferStatus:transferStatus];
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                
+//            });
         }
     }
     
     void onCallFeatureToggled(string callId, string featureName, bool status) override {
         if (wrapper.delegate) {
-            // Convert std::string to NSString
             NSString *nsCallId = [NSString stringWithUTF8String:callId.c_str()];
             NSString *nsFeatureName = [NSString stringWithUTF8String:featureName.c_str()];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [wrapper.delegate onFeatureStatusToggled:nsCallId featureName:nsFeatureName status:status];
-            });
+            [wrapper.delegate onFeatureStatusToggled:nsCallId featureName:nsFeatureName status:status];
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//          [wrapper.delegate onFeatureStatusToggled:nsCallId featureName:nsFeatureName status:status];
+//            });
+        }
+    }
+    
+    void onExceptionRaised(string callId, int forEventType, string message) override {
+        if (wrapper.delegate) {
+            NSString *nsCallId = [NSString stringWithUTF8String:callId.c_str()];
+            NSString *nsErrorMessage = [NSString stringWithUTF8String:message.c_str()];
+            [wrapper.delegate onExceptionRaised:nsCallId forEventType: forEventType errorMessage:nsErrorMessage];
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                
+//            });
         }
     }
 };
@@ -110,11 +118,19 @@ public:
     string cDomain = [domain UTF8String];
     string cCallId = [callId UTF8String];
     EventPayload *payload = new EventPayload(MAKE_CALL, cCallId);
-    cout<< "CALL_DEBUG: callId" << callId << endl;
-    payload->dest_uri = cDestUri;
+    payload->destUri = cDestUri;
     payload->username = cUsername;
     payload->password = cPassword;
     payload->domain = cDomain;
+    self.callManager->postEvent(payload);
+}
+
+- (void)initCall:(NSString *)destUri callId:(NSString *)callId {
+    string cDestUri = [destUri UTF8String];
+    string cCallId = [callId UTF8String];
+    EventPayload *payload = new EventPayload(MAKE_CALL, cCallId);
+    payload->destUri = cDestUri;
+    payload->useDefaultAccount = true;
     self.callManager->postEvent(payload);
 }
 
@@ -152,10 +168,31 @@ public:
     string cMediaAddr = [mediaAddr UTF8String];
     string cCallId = [callId UTF8String];
     EventPayload *payload = new EventPayload(ANSWER_CALL, cCallId);
-    payload->dest_uri = cDestUri;
+    payload->destUri = cDestUri;
     payload->channelid = cChannelId;
     payload->mediaAddr = cMediaAddr;
     self.callManager->postEvent(payload);
+}
+
+- (void)blindTransferCall:(NSString *)destUri callId:(NSString *)callId {
+    string cDestUri = [destUri UTF8String];
+    string cCallId = [callId UTF8String];
+    EventPayload* event = new EventPayload(BLIND_TRANSFER_CALL, cCallId);
+    event->destUri = cDestUri;
+    _callManager->postEvent(event);
+}
+
+
+- (void) setDefaultAccount:(NSString *)userId password:(NSString *)password {
+    string cUsername = [userId UTF8String];
+    string cPassword;
+    if (password) {
+        cPassword = [password UTF8String];  // Only convert if password is not nil
+    } else {
+        cPassword = "";  // Or handle the null case appropriately (e.g., empty string)
+    }
+    
+    _callManager->setDefaultAccount(cUsername, cPassword);
 }
 
 @end

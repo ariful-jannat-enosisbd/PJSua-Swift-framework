@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		533D798C2D031095006348E6 /* PJSIPSwiftClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533D798B2D031095006348E6 /* PJSIPSwiftClient.swift */; };
 		5343A1ED2CAEBA6500073840 /* libpjsua2-arm64-apple-darwin_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5343A1E22CAEBA2E00073840 /* libpjsua2-arm64-apple-darwin_ios.a */; };
 		5343A1EE2CAEBA6500073840 /* libpjsua-arm64-apple-darwin_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5343A1E42CAEBA2E00073840 /* libpjsua-arm64-apple-darwin_ios.a */; };
 		5343A1EF2CAEBA6500073840 /* libpjsip-ua-arm64-apple-darwin_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5343A1E12CAEBA2E00073840 /* libpjsip-ua-arm64-apple-darwin_ios.a */; };
@@ -50,6 +51,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		533D798B2D031095006348E6 /* PJSIPSwiftClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PJSIPSwiftClient.swift; sourceTree = "<group>"; };
 		5343A1E12CAEBA2E00073840 /* libpjsip-ua-arm64-apple-darwin_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpjsip-ua-arm64-apple-darwin_ios.a"; path = "PjsipLibrary/pjsip/lib/libpjsip-ua-arm64-apple-darwin_ios.a"; sourceTree = "<group>"; };
 		5343A1E22CAEBA2E00073840 /* libpjsua2-arm64-apple-darwin_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpjsua2-arm64-apple-darwin_ios.a"; path = "PjsipLibrary/pjsip/lib/libpjsua2-arm64-apple-darwin_ios.a"; sourceTree = "<group>"; };
 		5343A1E32CAEBA2E00073840 /* libpjsip-arm64-apple-darwin_ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libpjsip-arm64-apple-darwin_ios.a"; path = "PjsipLibrary/pjsip/lib/libpjsip-arm64-apple-darwin_ios.a"; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 			children = (
 				5360119D2D019EA900C8D5F5 /* PJSIPWrapper.h */,
 				5360119E2D019EA900C8D5F5 /* PJSIPWrapper.m */,
+				533D798B2D031095006348E6 /* PJSIPSwiftClient.swift */,
 			);
 			path = PJSIP;
 			sourceTree = "<group>";
@@ -354,6 +357,7 @@
 				536011B52D01D3C700C8D5F5 /* SIPCall.cpp in Sources */,
 				536011A02D019EA900C8D5F5 /* PJSIPWrapper.m in Sources */,
 				BA1462CD2C4040770067BF46 /* CustomPJSUA2.cpp in Sources */,
+				533D798C2D031095006348E6 /* PJSIPSwiftClient.swift in Sources */,
 				BA0970D12C3FFA6E004C4CE4 /* PJSIPFramework.docc in Sources */,
 				BA1462D02C4040770067BF46 /* wrapper.mm in Sources */,
 				536011AC2D01C79A00C8D5F5 /* CallManager.cpp in Sources */,

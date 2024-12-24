@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)onCallStateChanged:(NSString*)callId state:(NSInteger) state stateName:(NSString*) stateName;
 - (void)onTransferStatusChanged:(NSString*) callId transferStatus:(NSInteger) transferStatus;
 - (void)onFeatureStatusToggled:(NSString*) callId featureName:(NSString*) featureName status:(bool) status;
+- (void)onExceptionRaised:(NSString*) callId forEventType:(int) eventType errorMessage:(NSString*) errorMessage;
 @end
 
 @interface PJSIPWrapper : NSObject
@@ -26,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) setProxyServerAddress: (NSString *) proxy;
 - (void) initializeAndPrepare;
+
+- (void)setDefaultAccount:(NSString *)userId password:(nullable NSString *)password;
 
 
 /// Initiates a call to the specified destination URI.
@@ -40,6 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
               password:(NSString *)password
                 domain:(NSString *)domain
                 callId:(NSString *)callId;
+
+- (void) initCall:(NSString *) destUri callId: (NSString *) callId;
 
 /// Answers an incoming call.
 ///
@@ -72,6 +77,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param callId The unique identifier for the call.
 - (void)sendDTMFTone:(NSString *)data
                callId:(NSString *)callId;
+
+- (void) blindTransferCall:(NSString *) destUri
+                    callId:(NSString *)callId;
 
 /// Ends a specific call
 ///
