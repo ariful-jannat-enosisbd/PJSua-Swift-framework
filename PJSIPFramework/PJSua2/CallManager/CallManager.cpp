@@ -269,6 +269,17 @@ void CallManager::hangupCall(EventPayload *payload) {
     prm.statusCode = PJSIP_SC_DECLINE;
     call->hangup(prm);
 }
+void CallManager::hangupAllCall() {
+    for (auto& pair : activeCalls) {
+        SIPCall* call = pair.second;
+        if (call) {
+            CallOpParam prm(true);
+            prm.statusCode = PJSIP_SC_DECLINE;
+            call->hangup(prm);
+        }
+    }
+    activeCalls.clear(); // Remove all calls from the map after hanging up
+}
 
 void CallManager::onTimer(const OnTimerParam &prm) {
     EventPayload* payload = static_cast<EventPayload*>(prm.userData);
@@ -290,6 +301,8 @@ void CallManager::onTimer(const OnTimerParam &prm) {
             toggleMute(payload);
         } else if(payload->type == HANGUP_CALL) {
             hangupCall(payload);
+        } else if(payload->type == HANGUP_ALL_CALL) {
+            hangupAllCall();
         } else if(payload->type == BLIND_TRANSFER_CALL) {
             blindTransferCall(payload);
         }

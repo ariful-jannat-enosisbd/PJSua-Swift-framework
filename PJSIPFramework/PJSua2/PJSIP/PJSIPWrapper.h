@@ -86,6 +86,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param callId The id of the call that should disconnect
 - (void)endCallWithID:(NSString *)callId;
 
+
+/// Ends all calls
+///
+- (void) endAllCalls;
+
 @end
 
 NS_ASSUME_NONNULL_END

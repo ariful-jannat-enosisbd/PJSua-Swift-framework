@@ -138,7 +138,12 @@ public:
     string cCallId = [callId UTF8String];
     EventPayload* event = new EventPayload(HANGUP_CALL, cCallId);
     _callManager->postEvent(event);
-} 
+}
+
+- (void)endAllCalls {
+    EventPayload* event = new EventPayload(HANGUP_ALL_CALL, "");
+    _callManager->postEvent(event);
+}
 
 - (void)sendDTMFTone:(nonnull NSString *)data callId:(NSString *)callId {
     string cData = [data UTF8String];

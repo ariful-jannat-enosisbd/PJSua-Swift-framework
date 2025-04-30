@@ -25,6 +25,7 @@ enum CallAction {
     MUTE_UNMUTE_CALL = 5,
     SEND_DTMF_TONE = 6,
     BLIND_TRANSFER_CALL = 7,
+    HANGUP_ALL_CALL = 8
 };
 
 class EventPayload {
@@ -179,6 +180,7 @@ private:
      * @param payload The event payload containing the call information.
      */
     void hangupCall(EventPayload *payload);
+    void hangupAllCall();
 
     /**
      * @brief Performs a blind transfer of an active call.
